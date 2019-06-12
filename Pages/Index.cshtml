@@ -1,11 +1,19 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to the Schedule Manager</h1>
+<div>
+    <h3>View Existing Schedules</h3>
+    <table>
+        <tr ng-repeat="e in shifts">
+            <td>{{e.lname}}</td>
+            <td>{{e.fname}}</td>
+            <td>{{e.startDT}}</td>
+            <td>{{e.endDT}}</td>
+            <td>{{e.position}}</td>
+        </tr>
+    </table>
     <p>{{test}}</p>
-
 </div>

@@ -1,7 +1,7 @@
 ﻿using ScheduleManager.Model;
 using ScheduleManager.DAL;
 
-namespace ScheduleManager.Controller
+namespace ScheduleManager.Controllers
 {
     /// <summary>
     /// This class insures proper access to the DAL \
