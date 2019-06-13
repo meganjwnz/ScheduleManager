@@ -18,6 +18,7 @@ namespace ScheduleManager.Model
         public char? Ssn { get; set; }
         public string Gender { get; set; }
         public string Phone { get; set; }
+        public string StreetAddress { get; set; }
         public string Zipcode { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

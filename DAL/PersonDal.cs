@@ -1,6 +1,8 @@
 ﻿using ScheduleManager.Model;
-using System.Data;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using Xceed.Wpf.Toolkit;
 
 namespace ScheduleManager.DAL
 {
@@ -10,33 +12,89 @@ namespace ScheduleManager.DAL
     /// </summary>
     public class PersonDAL
     {
+        public List<Person> getAllEmployees() {
+            List<Person> allEmployees = new List<Person>();
+
+            using (SqlConnection connection = ScheduleManager_DB_Connection.GetConnection())
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("spGetAllEmployees", connection))
+
+
+                    return allEmployees;
+            }
+        }
+        /// <summary>
+        /// This method adds an accepted person to the database
+        /// </summary>
+        /// <param name="addPerson"></param>
         public void AddPerson(Person addPerson)
         {
-            SqlConnection connection = ScheduleManager_DB_Connection.GetConnection();
+            int addedPersonId = -1;
+
             try
             {
-                SqlCommand command = new SqlCommand("spAddEmployee", connection);
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@last_name", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@first_name", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@date_of_birth", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@ssn", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@gender", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@street_address", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@phone", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@zipcode", addPerson.LastName));
-                command.Parameters.Add(new SqlParameter("@username", addPerson.LastName));
-
-                connection.Open();
-                SqlDataReader dataReader = command.ExecuteReader();
-                connection.Close();
-            }
-            finally
-            {
-                if (connection != null)
+                using (SqlConnection connection = ScheduleManager_DB_Connection.GetConnection())
                 {
-                    connection.Close();
-                }            
+                    connection.Open();
+                    using (SqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        //int id = 1;
+                        string insertPerson = "INSERT person(" +
+                            "[last_name]" +
+                            " ,[first_name]" +
+                            " ,[date_of_birth]" +
+                            " ,[ssn]" +
+                            " ,[gender]" +
+                            " ,[street_address]" +
+                            " ,[phone]" +
+                            " ,[zipcode]" +
+                            " ,[username]" +
+                            " ,[password]" +
+                            " ,[roleId]" +
+                            " ,[statusId])" +
+                            " VALUES(" +
+                            " @last_name" +
+                            ", @first_name" +
+                            ", @date_of_birth" +
+                            ", @ssn" +
+                            ", @gender" +
+                            ", @street_address" +
+                            ", @phone" +
+                            ", @zipcode" +
+                            ", @username" +
+                            ", CAST('newHire' As varbinary(150))" +
+                            ", @roleId" +
+                            ", @statusId)";
+
+
+                        using (SqlCommand command = new SqlCommand(insertPerson, connection))
+                        {
+                            command.Parameters.Add(new SqlParameter("@last_name", addPerson.LastName));
+                            command.Parameters.Add(new SqlParameter("@first_name", addPerson.FirstName));
+                            command.Parameters.Add(new SqlParameter("@date_of_birth", addPerson.DateOfBirth));
+                            command.Parameters.Add(new SqlParameter("@ssn", addPerson.Ssn));
+                            command.Parameters.Add(new SqlParameter("@gender", addPerson.Gender));
+                            command.Parameters.Add(new SqlParameter("@street_address", addPerson.StreetAddress));
+                            command.Parameters.Add(new SqlParameter("@phone", addPerson.Phone));
+                            command.Parameters.Add(new SqlParameter("@zipcode", addPerson.Zipcode));
+                            command.Parameters.Add(new SqlParameter("@username", addPerson.Username));
+                            string selectStatement = "SELECT IDENT_CURRENT('Person') FROM Person";
+
+                            using (SqlCommand selectCommand = new SqlCommand(selectStatement, connection))
+                            {
+                                selectCommand.Transaction = transaction;
+                                addedPersonId = Convert.ToInt32(selectCommand.ExecuteScalar());
+                            }
+                            transaction.Commit();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Message Box won't work - thats wierd
+                //MessageBox.Show(ex.Message, "Error");
             }
         }
     }
