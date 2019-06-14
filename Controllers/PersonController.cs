@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace ScheduleManager.Controllers
 {
     /// <summary>
-    /// This class insures proper access to the DAL \
+    /// This class insures proper access to the DAL 
     /// and controls all manipulation of the person object(s)
     /// </summary>
     public class PersonController
