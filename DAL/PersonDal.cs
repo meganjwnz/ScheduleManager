@@ -12,20 +12,66 @@ namespace ScheduleManager.DAL
     /// </summary>
     public class PersonDAL
     {
+        /// <summary>
+        /// this method returns all employees
+        /// </summary>
+        /// <returns></returns>
         public List<Person> getAllEmployees() {
             List<Person> allEmployees = new List<Person>();
+            string selectAllEmployees = "Select id" +
+                ", last_name" +
+                ", first_name" +
+                ", date_of_birth" +
+                ", ssn" +
+                ", gender" +
+                ", street_address" +
+                ", phone" +
+                ", zipcode" +
+                ", username" +
+                ", password" +
+                ", roleId" +
+                ", statusId" +
+                " Fromdbo.person ";
 
             using (SqlConnection connection = ScheduleManager_DB_Connection.GetConnection())
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("spGetAllEmployees", connection))
+                using (SqlCommand command = new SqlCommand(selectAllEmployees, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Person person = new Person();
+                            person.Id = (int)reader["id"];
+                            person.LastName = reader["last_name"].ToString();
+                            person.FirstName = reader["first_name"].ToString();
+                            person.DateOfBirth = (DateTime)reader["date_of_birth"];
+                            person.Ssn = (char)reader["ssn"];
+                            person.Gender = reader["gender"].ToString();
+                            person.StreetAddress = reader["street_address"].ToString();
+                            person.Phone = reader["phone"].ToString();
+                            person.Zipcode = reader["zipcode"].ToString();
+                            person.Username = reader["username"].ToString();
+                            person.Password = (byte[])reader["password"];
+                            person.RoleId = (int)reader["roleId"];
+                            person.StatusId = (int)reader["statusId"];
 
 
+                            allEmployees.Add(person);
+                        }
+
+                    }
                     return allEmployees;
+                }
             }
         }
         /// <summary>
         /// This method adds an accepted person to the database
+        /// 
+        /// 
+        /// Need to set in the View an appropiate auto generated-- password - roleId - StatusId -
+        /// 
         /// </summary>
         /// <param name="addPerson"></param>
         public void AddPerson(Person addPerson)
@@ -39,8 +85,7 @@ namespace ScheduleManager.DAL
                     connection.Open();
                     using (SqlTransaction transaction = connection.BeginTransaction())
                     {
-                        //int id = 1;
-                        string insertPerson = "INSERT person(" +
+                     string insertPerson = "INSERT person(" +
                             "[last_name]" +
                             " ,[first_name]" +
                             " ,[date_of_birth]" +
@@ -63,7 +108,7 @@ namespace ScheduleManager.DAL
                             ", @phone" +
                             ", @zipcode" +
                             ", @username" +
-                            ", CAST('newHire' As varbinary(150))" +
+                            ", HASHBYTES('SHA2_256', @password)" +
                             ", @roleId" +
                             ", @statusId)";
 
@@ -79,6 +124,10 @@ namespace ScheduleManager.DAL
                             command.Parameters.Add(new SqlParameter("@phone", addPerson.Phone));
                             command.Parameters.Add(new SqlParameter("@zipcode", addPerson.Zipcode));
                             command.Parameters.Add(new SqlParameter("@username", addPerson.Username));
+                            command.Parameters.Add(new SqlParameter("@password", addPerson.Password));
+                            command.Parameters.Add(new SqlParameter("@roleId", addPerson.Password));
+                            command.Parameters.Add(new SqlParameter("@statusID", addPerson.Password));
+
                             string selectStatement = "SELECT IDENT_CURRENT('Person') FROM Person";
 
                             using (SqlCommand selectCommand = new SqlCommand(selectStatement, connection))
