@@ -1,30 +1,25 @@
 ﻿using ScheduleManager.Model;
 using ScheduleManager.DAL;
+using System.Collections.Generic;
 
 namespace ScheduleManager.Controllers
 {
     /// <summary>
-    /// This class insures proper access to the DAL \
+    /// This class insures proper access to the DAL 
     /// and controls all manipulation of the person object(s)
     /// </summary>
     public class PersonController
     {
         PersonDAL personDAL = new PersonDAL();
-<<<<<<< Updated upstream
-=======
-        #region addPerson
+
         /// <summary>
         /// Adds a person to the database
         /// </summary>
         /// <param name="addedPerson"></param>
->>>>>>> Stashed changes
         public void AddPerson(Person addedPerson)
         {
             this.personDAL.AddPerson(addedPerson);
         }
-<<<<<<< Updated upstream
-=======
-        #endregion
 
         #region Return specified Persons
         /// <summary>
@@ -106,12 +101,6 @@ namespace ScheduleManager.Controllers
         }
         #endregion
 
-        public void DeactivatePersonById(int personId)
-        {
-            //Call the Dal and set accepted personId to the inactive status 
-        }
 
-
->>>>>>> Stashed changes
     }
 }
