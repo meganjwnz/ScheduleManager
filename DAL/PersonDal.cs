@@ -12,13 +12,7 @@ namespace ScheduleManager.DAL
     /// </summary>
     public class PersonDAL
     {
-        /// <summary>
-        /// this method returns all employees
-        /// </summary>
-        /// <returns></returns>
-        public List<Person> getAllEmployees() {
-            List<Person> allEmployees = new List<Person>();
-            string selectAllEmployees = "Select id" +
+        string selectedPersons = "Select id" +
                 ", last_name" +
                 ", first_name" +
                 ", date_of_birth" +
@@ -31,12 +25,19 @@ namespace ScheduleManager.DAL
                 ", password" +
                 ", roleId" +
                 ", statusId" +
-                " Fromdbo.person ";
-
+                " From dbo.person ";
+        /// <summary>
+        /// this method returns all employees
+        /// </summary>
+        /// <returns></returns>
+        public List<Person> GetDesiredPersons(string whereClause) {
+            List<Person> persons = new List<Person>();
+            string desiredEmployees = this.selectedPersons + whereClause;
+                
             using (SqlConnection connection = ScheduleManager_DB_Connection.GetConnection())
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand(selectAllEmployees, connection))
+                using (SqlCommand command = new SqlCommand(desiredEmployees, connection))
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
@@ -58,11 +59,11 @@ namespace ScheduleManager.DAL
                             person.StatusId = (int)reader["statusId"];
 
 
-                            allEmployees.Add(person);
+                            persons.Add(person);
                         }
 
                     }
-                    return allEmployees;
+                    return persons;
                 }
             }
         }
